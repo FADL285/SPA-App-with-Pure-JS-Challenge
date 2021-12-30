@@ -94,8 +94,7 @@
       </div>
       <hr />
       <h1 class="mb-4 text-center">List of requested videos</h1>
-      <div id="list-of-requests">
-      </div>
+      <div id="list-of-requests"></div>
     </div>
 
     <template id="card-template">
@@ -104,8 +103,9 @@
           <div class="d-flex flex-column">
             <h3 class="card__title">Dummy Topic title</h3>
             <p class="text-muted mb-2 card__desc">dummy topic details</p>
-            <p class="mb-0 text-muted card__expected-res">
-              <strong>Expected results:</strong> Dummy expected result text
+            <p class="mb-0 text-muted card__expected-res_container">
+              <strong>Expected results:</strong>
+              <span class="card__expected-res">Dummy expected result text</span>
             </p>
           </div>
           <div class="d-flex flex-column text-center">
@@ -116,7 +116,7 @@
         </div>
         <div class="card-footer d-flex flex-row justify-content-between">
           <div>
-            <span class="text-info card__status">NEW</span>
+            <span class="text-info card__status text-uppercase">NEW</span>
             &bullet; added by <strong class="card__author">Fake Name</strong> on
             <time class="font-weight-bold card__date"></time>
           </div>

@@ -3,11 +3,16 @@ const listOfRequestsEl = document.getElementById('list-of-requests');
 const videoRequestCardTemplate = document.getElementById('card-template');
 
 const addCardToView = (...vidReq) => {
+  console.log(vidReq);
   const containerFragment = document.createDocumentFragment();
   vidReq.forEach((el) => {
     const cardEl = document.importNode(videoRequestCardTemplate.content, true);
     cardEl.querySelector('.card__title').textContent = el.topic_title;
     cardEl.querySelector('.card__desc').textContent = el.topic_details;
+    if (!el.expected_result)
+      cardEl
+        .querySelector('.card__expected-res_container')
+        .classList.add('d-none');
     cardEl.querySelector('.card__expected-res').textContent =
       el.expected_result;
     cardEl.querySelector('.card__status').textContent = el.status;
@@ -19,7 +24,8 @@ const addCardToView = (...vidReq) => {
 
     containerFragment.append(cardEl);
   });
-  listOfRequestsEl.append(containerFragment);
+  // console.log(containerFragment.content);
+  listOfRequestsEl.prepend(containerFragment);
 };
 
 const fetchVideoRequest = async () => {
