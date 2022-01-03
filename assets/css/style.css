@@ -1,3 +1,7 @@
 button:disabled {
   cursor: wait;
 }
+
+.gap-2 {
+  gap: calc(2 * 0.25rem);
+}

@@ -94,30 +94,24 @@
       </div>
       <hr />
       <h1 class="mb-4 text-center">List of requested videos</h1>
-      <div class="d-flex justify-content-between mb-4">
+      <div
+        class="
+          d-flex
+          flex-column flex-md-row
+          gap-2
+          justify-content-between
+          mb-4
+        "
+      >
         <div class="btn-group btn-group-toggle" data-toggle="buttons">
-          <label class="btn btn-primary active" id="sort_by_new">
-            <input type="radio" name="options" value="newFirst" /> New first
-          </label>
-          <label class="btn btn-primary" id="sort_by_top">
-            <input type="radio" name="options" value="topVotedFirst" />
-            Top voted first
-          </label>
+          <button class="btn btn-primary active" id="sort_by_new" data-type="newFirst">New first</button>
+          <button class="btn btn-primary" id="sort_by_top" data-type="topVotedFirst">Top voted first</button>
         </div>
 
         <div class="btn-group btn-group-toggle" data-toggle="buttons">
-          <label class="btn btn-primary active" id="filter_by_all">
-            <input type="radio" value="all" name="options" checked /> All
-          </label>
-          <label class="btn btn-primary" id="filter_by_new">
-            <input type="radio" value="new" name="options" /> New
-          </label>
-          <label class="btn btn-primary" id="filter_by_planned">
-            <input type="radio" value="planned" name="options" /> Planned
-          </label>
-          <label class="btn btn-primary" id="filter_by_done">
-            <input type="radio" value="done" name="options" /> Done
-          </label>
+          <button class="btn btn-primary active" id="filter_by_all" data-type="all">All</button>
+          <button class="btn btn-primary" id="filter_by_planned" data-type="planned">Planned</button>
+          <button class="btn btn-primary" id="filter_by_done" data-type="done">Done</button>
         </div>
 
         <div>
