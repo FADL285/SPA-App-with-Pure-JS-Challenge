@@ -26,7 +26,10 @@ app.post('/video-request', upload.none(), async (req, res, next) => {
 });
 
 app.get('/video-request', async (req, res, next) => {
-  const data = await VideoRequestData.getAllVideoRequests();
+  const { searchTerm } = req.query;
+  const data = searchTerm
+    ? await VideoRequestData.searchRequests(searchTerm)
+    : await VideoRequestData.getAllVideoRequests();
   res.send(data);
   next();
 });

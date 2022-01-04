@@ -11,9 +11,9 @@ module.exports = {
   },
 
   searchRequests: (topic) => {
-    return VideoRequest.find({ topic_title: topic })
-      .sort({ addedAt: '-1' })
-      .limit(top);
+    return VideoRequest.find({
+      topic_title: { $regex: topic, $options: 'i' }
+    }).sort({ addedAt: '-1' });
   },
 
   getRequestById: (id) => {
@@ -25,8 +25,8 @@ module.exports = {
       status: status,
       video_ref: {
         link: resVideo,
-        date: resVideo && new Date(),
-      },
+        date: resVideo && new Date()
+      }
     };
 
     return VideoRequest.findByIdAndUpdate(id, updates, { new: true });
@@ -40,8 +40,8 @@ module.exports = {
       {
         votes: {
           [vote_type]: ++oldRequest.votes[vote_type],
-          [other_type]: oldRequest.votes[other_type],
-        },
+          [other_type]: oldRequest.votes[other_type]
+        }
       },
       { new: true }
     );
@@ -49,5 +49,5 @@ module.exports = {
 
   deleteRequest: (id) => {
     return VideoRequest.deleteOne({ _id: id });
-  },
+  }
 };
