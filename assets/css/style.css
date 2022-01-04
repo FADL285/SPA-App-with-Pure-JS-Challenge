@@ -1,3 +1,7 @@
+body {
+  min-height: 100.075vh;
+}
+
 button:disabled {
   cursor: wait;
 }

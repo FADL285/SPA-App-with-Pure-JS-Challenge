@@ -2,6 +2,26 @@ const videoRequestFormEl = document.getElementById('video-request');
 const listOfRequestsEl = document.getElementById('list-of-requests');
 const videoRequestCardTemplate = document.getElementById('card-template');
 const sortElements = document.querySelectorAll('#filters button[id^=sort_by]');
+let sortBy = '';
+const searchBox = document.getElementById('search_box');
+let searchTerm = '';
+
+// !! HELPERS !! \\
+// //__//==//__// //__//==//__// //__//==//__// //__//==//__// //
+
+/**
+ * debounce function delays the processing of the input event until the user has stopped typing for a predetermined amount of time (delay).
+ * @param {Function} fn callback function that will be called after delay time expires.
+ * @param {number} delay delay time in milliseconds to delay the processing of the callback function
+ * @returns {Function}
+ */
+const debounce = (fn, delay) => {
+  let timer;
+  return function (...arg) {
+    clearTimeout(timer);
+    timer = setTimeout(fn.bind(null, ...arg), delay);
+  };
+};
 
 /**
  * Clear Any cards in list if requests div
@@ -10,11 +30,15 @@ const clearListOfRequestsEl = () => {
   listOfRequestsEl.innerHTML = '';
 };
 
+// !! MAIN FUNCs !! \\
+// //__//==//__// //__//==//__// //__//==//__// //__//==//__// //
+
 /**
  * Take array of video requests and append them in dom.
  * @param  {Array} vidReq array of video requests.
+ * @param {boolean} clean remove any cards in video requests list
  */
-const addCardToView = (vidReq) => {
+const addCardToView = (vidReq, clean = false) => {
   // console.log(vidReq);
   const containerFragment = document.createDocumentFragment();
   vidReq.forEach((el) => {
@@ -40,27 +64,28 @@ const addCardToView = (vidReq) => {
     containerFragment.append(cardEl);
   });
   // console.log(containerFragment.content);
+  if (clean) clearListOfRequestsEl();
   listOfRequestsEl.prepend(containerFragment);
 };
 
 /**
  * Fetch video requests from the server.
- * @param  {...String} filter - filter or sort the request based on specific filter terms, available filters:
- *  newFirst - topVotedFirst - all - planned - done
+ * @param {{sortBy: string, filterBy: string, searchTerm: string}} modifyObject modify the request by sorting, filtering and/or searching.
  */
-const fetchVideoRequest = async (...filters) => {
+const fetchVideoRequest = async ({ sortBy, filterBy, searchTerm } = {}) => {
   try {
-    const response = await fetch('http://localhost:7777/video-request');
+    const response = await fetch(
+      `http://localhost:7777/video-request${
+        searchTerm ? '?searchTerm=' + searchTerm : ''
+      }`
+    );
     if (!response.ok) throw new Error(response.statusText);
     const data = await response.json();
-    for (const filter of filters) {
-      if (filter === 'topVotedFirst')
-        data.sort(
-          (a, b) => b.votes.ups - b.votes.downs - (a.votes.ups - a.votes.downs)
-        );
-    }
-    console.log(data);
-    addCardToView(data);
+    if (sortBy === 'topVotedFirst')
+      data.sort(
+        (a, b) => b.votes.ups - b.votes.downs - (a.votes.ups - a.votes.downs)
+      );
+    addCardToView(data, true);
   } catch (err) {
     console.log(err.message);
   }
@@ -68,7 +93,6 @@ const fetchVideoRequest = async (...filters) => {
 
 /**
  * Create new Video Request by submitting the form.
- * @param {*} event
  */
 const formSubmitHandler = async (event) => {
   event.preventDefault();
@@ -91,7 +115,6 @@ const formSubmitHandler = async (event) => {
 
 /**
  * Make Vote Handler
- * @param {*} event
  */
 const makeVoteHandler = async (event) => {
   if (!event.target.classList.contains('vote-btn')) return;
@@ -114,21 +137,30 @@ const makeVoteHandler = async (event) => {
 
 /**
  * Sort video requests based on sort type {newFirst - topVotedFirst}
- * @param {*} event
  */
 const sortResponsesHandler = (event) => {
-  const sortBy = event.target.dataset.type;
-  clearListOfRequestsEl();
-  fetchVideoRequest(sortBy);
+  sortBy = event.target.dataset.type;
+  fetchVideoRequest({ sortBy, searchTerm });
   event.target.classList.add('active');
   const sibling =
     event.target.previousElementSibling || event.target.nextElementSibling;
   sibling.classList.remove('active');
 };
 
+/**
+ * Handle users searching.
+ */
+const searchHandler = debounce(fetchVideoRequest, 550);
+
+// //__//==//__// //__//==//__// //__//==//__// //__//==//__// //
+
 fetchVideoRequest();
 videoRequestFormEl.addEventListener('submit', formSubmitHandler);
 listOfRequestsEl.addEventListener('click', makeVoteHandler);
 sortElements.forEach((element) => {
   element.addEventListener('click', sortResponsesHandler);
+});
+searchBox.addEventListener('input', (event) => {
+  searchTerm = event.target.value;
+  searchHandler({ sortBy, searchTerm });
 });
