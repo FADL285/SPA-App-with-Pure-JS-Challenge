@@ -92,28 +92,6 @@ const fetchVideoRequest = async ({ sortBy, filterBy, searchTerm } = {}) => {
 };
 
 /**
- * Create new Video Request by submitting the form.
- */
-const formSubmitHandler = async (event) => {
-  event.preventDefault();
-  const formData = new FormData(videoRequestFormEl);
-  videoRequestFormEl.querySelector('button').disabled = true;
-  try {
-    const response = await fetch('http://localhost:7777/video-request', {
-      method: 'POST',
-      body: formData
-    });
-    if (!response.ok) throw new Error(response.statusText);
-    const data = await response.json();
-    addCardToView([data]);
-    videoRequestFormEl.reset();
-  } catch (err) {
-    console.log(err.message);
-  }
-  videoRequestFormEl.querySelector('button').disabled = false;
-};
-
-/**
  * Make Vote Handler
  */
 const makeVoteHandler = async (event) => {
@@ -153,13 +131,78 @@ const sortResponsesHandler = (event) => {
 const searchHandler = debounce(fetchVideoRequest, 550);
 
 // //__//==//__// //__//==//__// //__//==//__// //__//==//__// //
+// !!!! Form Submission !!!!
+// //__//==//__// //__//==//__// //__//==//__// //__//==//__// //
+
+/**
+ * verify that the input is valid.
+ * @param {HTMLElement} form
+ */
+function verifyInputsValidity(form) {
+  const formFields = Array.from(form.elements);
+  formFields.forEach((el) => {
+    if (el.required) {
+      el.addEventListener(
+        'input',
+        debounce((event) => {
+          if (!event.target.checkValidity())
+            event.target.classList.add('is-invalid');
+          else event.target.classList.remove('is-invalid');
+        }, 300)
+      );
+    }
+  });
+}
+
+function checkFormValidity(form) {
+  const formFields = Array.from(form.elements);
+  if (!form.checkValidity()) {
+    formFields.forEach((el) => {
+      if (!el.checkValidity()) el.classList.add('is-invalid');
+    });
+  }
+  return form.checkValidity();
+}
+
+/**
+ * Create new Video Request by submitting the form.
+ */
+async function formSubmitHandler(event) {
+  event.preventDefault();
+  // Form Validation
+  const isValid = checkFormValidity(this);
+  if (!isValid) return;
+  // Pass Validation and Get data to send
+  const formData = new FormData(videoRequestFormEl);
+  videoRequestFormEl.querySelector('button').disabled = true;
+  try {
+    const response = await fetch('http://localhost:7777/video-request', {
+      method: 'POST',
+      body: formData
+    });
+    if (!response.ok) throw new Error(response.statusText);
+    const data = await response.json();
+    addCardToView([data]);
+    videoRequestFormEl.reset();
+  } catch (err) {
+    console.log(err.message);
+  }
+  videoRequestFormEl.querySelector('button').disabled = false;
+}
+
+// //__//==//__// //__//==//__// //__//==//__// //__//==//__// //
 
 fetchVideoRequest();
+
 videoRequestFormEl.addEventListener('submit', formSubmitHandler);
+verifyInputsValidity(videoRequestFormEl);
+
 listOfRequestsEl.addEventListener('click', makeVoteHandler);
+
 sortElements.forEach((element) => {
   element.addEventListener('click', sortResponsesHandler);
 });
+
 searchBox.addEventListener('input', (event) => {
   searchTerm = event.target.value;
   searchHandler({ sortBy, searchTerm });

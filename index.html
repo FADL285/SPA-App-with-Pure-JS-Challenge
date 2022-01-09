@@ -14,26 +14,32 @@
   <body>
     <div class="container py-5">
       <div class="formContainer my-5">
-        <form id="video-request">
+        <form id="video-request" novalidate>
           <div class="row">
             <div class="col-md">
               <div class="form-group">
                 <label for="author_name">Your name *</label>
                 <input
+                  type="text"
                   class="form-control"
                   name="author_name"
                   placeholder="Write your name here"
+                  required
                 />
+                <p class="invalid-feedback m-0">this field is required</p>
               </div>
             </div>
             <div class="col-md">
               <div class="form-group">
                 <label for="author_email">Your email *</label>
                 <input
+                  type="email"
                   class="form-control"
                   name="author_email"
                   placeholder="Write your email here"
+                  required
                 />
+                <p class="invalid-feedback m-0">this field is required</p>
               </div>
             </div>
           </div>
@@ -43,21 +49,21 @@
               <div class="form-group">
                 <label for="topic_title">Topic *</label>
                 <input
+                  type="text"
                   class="form-control"
                   name="topic_title"
                   placeholder="Write your suggested topic here"
+                  maxlength="100"
+                  required
                 />
+                <p class="invalid-feedback m-0">this field is required</p>
               </div>
             </div>
             <div class="col-md">
               <div class="form-group">
                 <label for="target_level">Target level</label>
-                <select
-                  class="form-control"
-                  name="target_level"
-                  placeholder="Write your name here"
-                >
-                  <option value="begineer">Beginner</option>
+                <select class="form-control" name="target_level" required>
+                  <option value="beginner">Beginner</option>
                   <option value="medium">Medium</option>
                   <option value="advanced">Advanced</option>
                 </select>
@@ -72,7 +78,9 @@
                   class="form-control"
                   name="topic_details"
                   placeholder="Write your topic in more details here"
+                  required
                 ></textarea>
+                <p class="invalid-feedback m-0">this field is required</p>
               </div>
             </div>
             <div class="col-md">
